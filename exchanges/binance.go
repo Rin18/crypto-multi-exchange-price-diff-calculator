@@ -16,17 +16,15 @@ func GetBinanceSymbol(symbol string) (Ticker, error) {
 	if err != nil {
 		return Ticker{}, err
 	}
-	ticker, err := getResponse(fullURL, "Binance")
+	ticker, err := getBinanceResponse(fullURL, "Binance")
 	if err != nil {
 		return Ticker{}, err
 	}
 	return ticker, nil
 }
 
-func getResponse(url string, exchange string) (Ticker, error) {
-	ticker := Ticker{
-		Exchange: exchange,
-	}
+func getBinanceResponse(url string, exchange string) (Ticker, error) {
+	binanceTicker := Ticker{}
 	client := &http.Client{
 		Timeout: 5 * time.Second,
 	}
@@ -34,19 +32,19 @@ func getResponse(url string, exchange string) (Ticker, error) {
 	if err != nil {
 		return Ticker{}, err
 	}
+	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
 		return Ticker{}, fmt.Errorf("Server Error, status:%s", resp.Status)
 	}
-	defer resp.Body.Close()
 	response, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return Ticker{}, err
 	}
-	err = json.Unmarshal(response, &ticker)
+	err = json.Unmarshal(response, &binanceTicker)
 	if err != nil {
 		return Ticker{}, err
 	}
-	return ticker, nil
+	return binanceTicker, nil
 }
 
 func assembleURL(address string, params map[string]string) (string, error) {

@@ -12,4 +12,11 @@ func main() {
 		return
 	}
 	fmt.Println(ticker)
+	fmt.Println("Hyperliquid:")
+	hpreturn, err := exchanges.GetHyperliquidSymbol("BTCUSDT")
+	if err != nil {
+		fmt.Println("Hyperliquid Error, error:", err)
+		return
+	}
+	fmt.Println(hpreturn)
 }
